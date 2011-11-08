@@ -42,6 +42,11 @@ module Riaktor
       merge! [[ts, ["push", k.to_s, v]]]
     end
 
+    def remove_pushed(k, v, ts=nil)
+      ts ||= self.class.build_ts
+      merge! [[ts, ["remove_pushed", k.to_s, v]]]
+    end
+
     def document
       @document
     end
@@ -80,6 +85,10 @@ module Riaktor
         op, k, v = op
         @document[k] ||= []
         @document[k]  << v
+      when "remove_pushed" then
+        op, k, v = op
+        @document[k] ||= []
+        @document[k].delete v
       end
 
       true

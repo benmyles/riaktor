@@ -1,17 +1,113 @@
 require 'helper'
 
 class Person < Riaktor::Model
+  def add_friend(friend)
+    push "friend_ids", friend.id
+    save
+  end
+
+  def remove_friend(friend)
+    remove_pushed "friend_ids", friend.id
+    save
+  end
+
+  def friend_ids
+    get("friend_ids") || []
+  end
+
+  def friends
+    all = []; each_friend { |f| all << f }; all
+  end
+
+  def each_friend
+    friend_ids.each do |friend_id|
+      yield Person.find(friend_id)
+    end
+  end
 end
 
 class TestRiaktor < MiniTest::Unit::TestCase
   def setup
     Riak.disable_list_keys_warnings = true
     Person.bucket.keys.each do |k|
-      Person.bucket.delete(k)
-    end; sleep 0.1
+      Person.bucket.delete(k, {r: 3, w: 3, dw: 3})
+    end
   end
 
-  def test_model
+  def test_threaded_counters
+    p = Person.new
+    p.incr "counter", 1
+    p.save
+    p.reload
+    assert_equal 1, p.get("counter")
+
+    threads = []
+
+    19.times do
+      threads << Thread.new do
+        person = Person.find(p.id)
+        person.incr "counter", 1
+        person.save({r: 3, w: 3, dw: 3})
+      end
+    end
+
+    threads.each { |th| th.join }
+
+    p.reload
+    assert_equal 20, p.get("counter")
+  end
+
+  def test_counter_conflicts
+    p = Person.new
+    p.incr "counter", 1
+    p.save
+    p.reload
+    assert_equal 1, p.get("counter")
+
+    people = []
+    29.times { people << Person.find(p.id) }
+
+    people.each do |person|
+      person.incr "counter", 1
+      person.save
+    end
+
+    p.reload
+    assert_equal 30, p.get("counter")
+  end
+
+  def test_relationships_in_model
+    ben = Person.new
+    ben.set "first_name", "Ben"
+    ben.save
+
+    chris = Person.new
+    chris.set "first_name", "Chris"
+    chris.save
+
+    jos = Person.new
+    jos.set "first_name", "Jos"
+    jos.save
+
+    ben.add_friend chris
+    assert_equal [chris], ben.friends
+    ben.add_friend jos
+    assert_equal [chris, jos], ben.friends
+    ben.reload
+    assert_equal [chris, jos], ben.friends
+
+    ben.remove_friend chris
+    assert_equal [jos], ben.friends
+    ben.reload
+    assert_equal [jos], ben.friends
+
+    ben.add_friend chris
+    assert_equal [jos, chris], ben.friends
+    ben.reload
+    assert_equal [jos, chris], ben.friends
+  end
+
+  def test_conflict_resolution_in_model
     p = Person.new
     p.set "first_name", "Ben"
     p.set "last_name", "Myles"
@@ -52,6 +148,24 @@ class TestRiaktor < MiniTest::Unit::TestCase
     assert_equal "Myles", p.get("last_name")
     assert_equal "Luke",  p.get("middle_name")
     assert_equal 4,       p.get("cups_of_coffee")
+
+    p.push "friend_ids", "100"
+    p.push "friend_ids", "101"
+    p.push "friend_ids", "102"
+
+    p.save
+
+    p4.remove_pushed "friend_ids", "101"
+    p4.save
+
+    p.push "friend_ids", "103"
+    p.save
+
+    p.reload
+    assert_equal %w(100 102 103), p.get("friend_ids")
+
+    p4.reload
+    assert_equal %w(100 102 103), p4.get("friend_ids")
   end
 
   def test_document

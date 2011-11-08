@@ -5,6 +5,11 @@ module Riaktor
       self.to_s.tableize
     end
 
+    def self.reset_client
+      @client = nil
+      @bucket = nil
+    end
+
     def self.client
       @client ||= Riak::Client.new(http_backend: :Excon, http_port: 8091)
     end
@@ -16,12 +21,12 @@ module Riaktor
       end
     end
 
-    def self.find(id)
-      robj = resolve_any_conflicts self.bucket.get(id)
+    def self.find(id, opts={}, resolve_opts={})
+      robj = resolve_any_conflicts self.bucket.get(id, opts), resolve_opts
       new id, robj
     end
 
-    def self.resolve_any_conflicts(robj)
+    def self.resolve_any_conflicts(robj, resolve_opts={})
       return robj unless robj && robj.conflict?
 
       resolved_robj = robj.siblings.first.dup
@@ -34,7 +39,7 @@ module Riaktor
       end
 
       resolved_robj.data = document.oplog
-      resolved_robj.store
+      resolved_robj.store(resolve_opts)
 
       resolved_robj
     end
@@ -53,18 +58,18 @@ module Riaktor
       @document ||= Riaktor::Document.new(self.robj.data)
     end
 
-    def save
+    def save(opts={})
       self.robj.data = document.oplog
-      self.robj.store
+      self.robj.store(opts)
     end
 
-    def reload
+    def reload(opts={})
       @document = nil
-      self.robj = self.class.find(self.id).robj
+      self.robj = self.class.find(self.id, opts).robj
       true
     end
 
-    %w(get set unset incr push).each do |meth|
+    %w(get set unset incr push remove_pushed).each do |meth|
       define_method(meth) do |*args|
         document.send(meth, *args)
       end
@@ -76,6 +81,10 @@ module Riaktor
 
     def to_json
       to_hash.to_json
+    end
+
+    def ==(other)
+      other.is_a?(self.class) && to_hash == other.to_hash
     end
 
   end
