@@ -1,6 +1,7 @@
 source "http://rubygems.org"
 
-gem 'activesupport', '>= 2.3.5'
+gem 'activesupport', '~> 3'
+gem 'activemodel', '~> 3'
 gem 'i18n'
 
 gem "bson"

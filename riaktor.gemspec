@@ -41,7 +41,8 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<activesupport>, [">= 2.3.5"])
+      s.add_runtime_dependency(%q<activesupport>, ["~> 3"])
+      s.add_runtime_dependency(%q<activemodel>, ["~> 3"])
       s.add_runtime_dependency(%q<i18n>, [">= 0"])
       s.add_runtime_dependency(%q<bson>, [">= 0"])
       s.add_runtime_dependency(%q<bson_ext>, [">= 0"])
@@ -52,7 +53,8 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<jeweler>, ["~> 1.6.4"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
     else
-      s.add_dependency(%q<activesupport>, [">= 2.3.5"])
+      s.add_dependency(%q<activesupport>, ["~> 3"])
+      s.add_dependency(%q<activemodel>, ["~> 3"])
       s.add_dependency(%q<i18n>, [">= 0"])
       s.add_dependency(%q<bson>, [">= 0"])
       s.add_dependency(%q<bson_ext>, [">= 0"])
@@ -64,7 +66,8 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rcov>, [">= 0"])
     end
   else
-    s.add_dependency(%q<activesupport>, [">= 2.3.5"])
+    s.add_dependency(%q<activesupport>, ["~> 3"])
+    s.add_dependency(%q<activemodel>, ["~> 3"])
     s.add_dependency(%q<i18n>, [">= 0"])
     s.add_dependency(%q<bson>, [">= 0"])
     s.add_dependency(%q<bson_ext>, [">= 0"])
