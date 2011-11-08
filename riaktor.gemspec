@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
     "lib/riaktor.rb",
     "lib/riaktor/document.rb",
     "lib/riaktor/model.rb",
+    "riaktor.gemspec",
     "test/helper.rb",
     "test/test_riaktor.rb"
   ]
@@ -45,7 +46,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<bson>, [">= 0"])
       s.add_runtime_dependency(%q<bson_ext>, [">= 0"])
       s.add_runtime_dependency(%q<excon>, [">= 0"])
-      s.add_runtime_dependency(%q<riak-client>, [">= 0"])
+      s.add_runtime_dependency(%q<riak-client>, ["~> 0.9.8"])
       s.add_development_dependency(%q<minitest>, [">= 0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.6.4"])
@@ -56,7 +57,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<bson>, [">= 0"])
       s.add_dependency(%q<bson_ext>, [">= 0"])
       s.add_dependency(%q<excon>, [">= 0"])
-      s.add_dependency(%q<riak-client>, [">= 0"])
+      s.add_dependency(%q<riak-client>, ["~> 0.9.8"])
       s.add_dependency(%q<minitest>, [">= 0"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.6.4"])
@@ -68,7 +69,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<bson>, [">= 0"])
     s.add_dependency(%q<bson_ext>, [">= 0"])
     s.add_dependency(%q<excon>, [">= 0"])
-    s.add_dependency(%q<riak-client>, [">= 0"])
+    s.add_dependency(%q<riak-client>, ["~> 0.9.8"])
     s.add_dependency(%q<minitest>, [">= 0"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.6.4"])
