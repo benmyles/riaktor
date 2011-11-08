@@ -17,8 +17,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "riaktor"
   gem.homepage = "http://github.com/benmyles/riaktor"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{riaktor object mapper that keeps an oplog for resolving conflicts}
+  gem.description = %Q{riaktor object mapper that keeps an oplog for resolving conflicts}
   gem.email = "ben.myles+github@gmail.com"
   gem.authors = ["Ben Myles"]
   # dependencies defined in Gemfile
