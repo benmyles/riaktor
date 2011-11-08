@@ -7,7 +7,7 @@ gem "bson"
 gem "bson_ext"
 
 gem "excon"
-gem "riak-client", git: "https://github.com/seancribbs/ripple.git"
+gem "riak-client", "~> 0.9.8"
 
 group :development do
   gem "minitest", ">= 0"
